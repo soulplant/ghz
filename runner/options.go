@@ -59,6 +59,8 @@ type RunConfig struct {
 	insecure   bool
 	authority  string
 
+	dialOpts []grpc.DialOption
+
 	// load
 	rps              int
 	loadStart        uint
@@ -1134,6 +1136,15 @@ func WithDisableTemplateData(v bool) Option {
 func WithTransportCredentials(creds credentials.TransportCredentials) Option {
 	return func(o *RunConfig) error {
 		o.creds = creds
+
+		return nil
+	}
+}
+
+// WithDialOpts specifies extra dial options to use when dialing.
+func WithDialOpts(opts ...grpc.DialOption) Option {
+	return func(o *RunConfig) error {
+		o.dialOpts = opts
 
 		return nil
 	}

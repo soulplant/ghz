@@ -346,6 +346,8 @@ func (b *Requester) newClientConn(withStatsHandler bool) (*grpc.ClientConn, erro
 		opts = append(opts, grpc.WithDefaultServiceConfig(grpcServiceConfig))
 	}
 
+	opts = append(opts, b.config.dialOpts...)
+
 	// create client connection
 	return grpc.DialContext(ctx, b.config.host, opts...)
 }
