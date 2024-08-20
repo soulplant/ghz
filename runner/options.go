@@ -248,19 +248,21 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 		return nil, errors.New("you cannot skip more requests than those run")
 	}
 
-	creds, err := createClientTransportCredentials(
-		c.skipVerify,
-		c.cacert,
-		c.cert,
-		c.key,
-		c.cname,
-	)
+	if c.creds != nil {
+		creds, err := createClientTransportCredentials(
+			c.skipVerify,
+			c.cacert,
+			c.cert,
+			c.key,
+			c.cname,
+		)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		c.creds = creds
 	}
-
-	c.creds = creds
 
 	return c, nil
 }
@@ -1122,6 +1124,16 @@ func WithDisableTemplateFuncs(v bool) Option {
 func WithDisableTemplateData(v bool) Option {
 	return func(o *RunConfig) error {
 		o.disableTemplateData = v
+
+		return nil
+	}
+}
+
+// WithTransportCredentials sets the transport credentials for the run.  If set,
+// ignores other tls options.
+func WithTransportCredentials(creds credentials.TransportCredentials) Option {
+	return func(o *RunConfig) error {
+		o.creds = creds
 
 		return nil
 	}
